@@ -136,6 +136,7 @@ test/facebooker/models/event_test.rb
 test/facebooker/models/page_test.rb
 test/facebooker/models/photo_test.rb
 test/facebooker/models/user_test.rb
+test/facebooker/models/comment_test.rb
 test/facebooker/rails/publisher_test.rb
 test/facebooker/rails_integration_test.rb
 test/facebooker/rails/facebook_request_fix_2-3_test.rb

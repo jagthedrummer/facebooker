@@ -1,4 +1,5 @@
 $: << File.join(File.dirname(__FILE__), "..", 'lib')
+require 'rubygems'
 require 'facebooker'
 load "~/.facebooker" rescue fail("You'll need to specify API_KEY and SECRET_KEY to run this example.  One way to do that would be to put them in ~/.facebooker")
 session = Facebooker::Session::Desktop.create(API_KEY, SECRET_KEY)
