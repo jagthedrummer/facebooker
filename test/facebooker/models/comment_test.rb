@@ -5,6 +5,7 @@ class Facebooker::CommentTest < Test::Unit::TestCase
 
   def setup
     @session = Facebooker::Session.create('apikey', 'secretkey')
+    Facebooker::Session.current = @session
     @user = Facebooker::User.new(1234, @session)
     @other_user = Facebooker::User.new(4321, @session)
     ENV['FACEBOOK_CANVAS_PATH'] ='facebook_app_name'
@@ -21,32 +22,31 @@ class Facebooker::CommentTest < Test::Unit::TestCase
     expect_http_posts_with_responses(example_add_comment_response)
     #puts "Facebooker::Session.current = #{Facebooker::Session.current}"
     @comment = Facebooker::Comment.new({ :xid=>'test_xid',:text=>'that was realy hilarious!' }) 
-    @comment.save
-    assert_equal('403917', @comment.post_to_fb )
+    assert_equal('403917', @comment.save )
   end
 
-#  def test_get_comments_by_xid
-#    expect_http_posts_with_responses(example_comments_xml)
-#    comments = Facebooker::Comment.get_by_xid('pete_comments')
-#    assert_equal('Hola', comments[0].text)
-#    assert_equal(2, comments.size)
-#  end
-#
-#  def test_remove_true
-#    expect_http_posts_with_responses(example_comments_xml,example_remove_comment_true)
-#    comments = Facebooker::Comment.get_by_xid('pete_comments',@session)
-#    comment = comments[0]
-#    #expect_http_posts_with_responses()
-#    assert_equal true, comment.remove
-#  end
-#  
-#  def test_remove_false
-#    expect_http_posts_with_responses(example_comments_xml,example_remove_comment_false)
-#    comments = Facebooker::Comment.get_by_xid('pete_comments',@session)
-#    comment = comments[0]
-#    #expect_http_posts_with_responses()
-#    assert_equal false, comment.remove
-#  end
+  def test_get_comments_by_xid
+    expect_http_posts_with_responses(example_comments_xml)
+    comments = Facebooker::Comment.get_by_xid('pete_comments')
+    assert_equal('Hola', comments[0].text)
+    assert_equal(2, comments.size)
+  end
+
+  def test_remove_true
+    expect_http_posts_with_responses(example_comments_xml,example_remove_comment_true)
+    comments = Facebooker::Comment.get_by_xid('pete_comments')
+    comment = comments[0]
+    #expect_http_posts_with_responses()
+    assert_equal true, comment.remove
+  end
+  
+  def test_remove_false
+    expect_http_posts_with_responses(example_comments_xml,example_remove_comment_false)
+    comments = Facebooker::Comment.get_by_xid('pete_comments')
+    comment = comments[0]
+    #expect_http_posts_with_responses()
+    assert_equal false, comment.remove
+  end
 
 private
 

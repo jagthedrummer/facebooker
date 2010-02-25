@@ -21,27 +21,21 @@ module Facebooker
     def save()
        Session.current.post('facebook.comments.add',@options,false)
     end
-#    
-#    #pulls the comment list for a given xid
-#    def self.get_by_xid(xid)
-#      @comments = session.post('facebook.comments.get',{:xid => xid},false) do |response|
-#        response.map do |hash|
-#          Comment.from_hash(hash)
-#        end
-#      end
-#    end
-#    
-#    #def self.add(options)
-#      #session = Session.current
-#    #  @session.post('facebook.comments.add',options)
-#    #end
-#    
-#  
-#    #remove a this comment
-#    def remove()
-#      session.post('facebook.comments.remove', {:xid=>xid, :comment_id =>id},post)
-#    end
-#  
+    
+    #pulls the comment list for a given xid
+    def self.get_by_xid(xid)
+      @comments = Session.current.post('facebook.comments.get',{:xid => xid}) do |response|
+        response.map do |hash|
+          Comment.from_hash(hash)
+        end
+      end
+    end
+      
+    #remove a this comment
+    def remove()
+      Session.current.post('facebook.comments.remove', {:xid=>xid, :comment_id =>id})
+    end
+  
   
   
   end
