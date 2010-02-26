@@ -27,14 +27,14 @@ class Facebooker::CommentTest < Test::Unit::TestCase
 
   def test_get_comments_by_xid
     expect_http_posts_with_responses(example_comments_xml)
-    comments = Facebooker::Comment.get_by_xid('pete_comments')
+    comments = Facebooker::Comment.find_by_xid('pete_comments')
     assert_equal('Hola', comments[0].text)
     assert_equal(2, comments.size)
   end
 
   def test_remove_true
     expect_http_posts_with_responses(example_comments_xml,example_remove_comment_true)
-    comments = Facebooker::Comment.get_by_xid('pete_comments')
+    comments = Facebooker::Comment.find_by_xid('pete_comments')
     comment = comments[0]
     #expect_http_posts_with_responses()
     assert_equal true, comment.remove
@@ -42,7 +42,7 @@ class Facebooker::CommentTest < Test::Unit::TestCase
   
   def test_remove_false
     expect_http_posts_with_responses(example_comments_xml,example_remove_comment_false)
-    comments = Facebooker::Comment.get_by_xid('pete_comments')
+    comments = Facebooker::Comment.find_by_xid('pete_comments')
     comment = comments[0]
     #expect_http_posts_with_responses()
     assert_equal false, comment.remove

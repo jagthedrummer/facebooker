@@ -23,7 +23,7 @@ module Facebooker
     end
     
     #pulls the comment list for a given xid
-    def self.get_by_xid(xid)
+    def self.find_by_xid(xid)
       @comments = Session.current.post('facebook.comments.get',{:xid => xid}) do |response|
         response.map do |hash|
           Comment.from_hash(hash)
