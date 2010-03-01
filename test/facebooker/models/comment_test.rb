@@ -98,6 +98,7 @@ class Facebooker::CommentTest < Test::Unit::TestCase
     assert_equal false, comment.remove
   end
   
+  
   def test_get_comments_by_object_id
     expect_http_posts_with_responses(example_comments_by_object_xml)
     comments = Facebooker::Comment.find(:object_id=>'pete_comments')
@@ -180,7 +181,7 @@ private
   def example_comments_by_object_xml
     <<-XML
       <?xml version="1.0" encoding="UTF-8"?>
-      <stream_getComments_response xmlns="http://api.facebook.com/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://api.facebook.com/1.0/ http://api.facebook.com/1.0/facebook.xsd" list="true">
+      <comments_get_response xmlns="http://api.facebook.com/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://api.facebook.com/1.0/ http://api.facebook.com/1.0/facebook.xsd" list="true">
         <comment>
           <object_id>pete_comments</object_id>
           <fromid>563683308</fromid>

@@ -75,7 +75,7 @@ module Facebooker
     
     #pulls the comment list for a given FB object 
     def self.find_by_object_id(object_id)
-      @comments = Session.current.post('facebook.stream.getComments',{:object_id => object_id}) do |response|
+      @comments = Session.current.post('facebook.comments.get',{:object_id => object_id}) do |response|
         response.map do |hash|
           Comment.from_hash(hash)
         end
