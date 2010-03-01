@@ -318,6 +318,18 @@ module Facebooker
        array_of_hashes(element('comments_get_response', data), 'comment')
     end
   end
+  
+  class StreamGetComments < Parser#:nodoc:
+    def self.process(data)
+       array_of_hashes(element('stream_getComments_response', data), 'comment')
+    end
+  end
+  
+  class StreamRemoveComment < Parser#:nodoc:
+    def self.process(data)
+      booleanize(data)
+    end
+  end
 
   class BatchRun < Parser #:nodoc:
     class << self
@@ -747,7 +759,9 @@ module Facebooker
       'facebook.sms.canSend' => SmsCanSend,
       'facebook.comments.add' => CommentsAdd,
       'facebook.comments.remove' => CommentsRemove,
-      'facebook.comments.get' => CommentsGet
+      'facebook.comments.get' => CommentsGet,
+      'facebook.stream.getComments' => StreamGetComments,
+      'facebook.stream.removeComment' => StreamRemoveComment
     }
   end
 end

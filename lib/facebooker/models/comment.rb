@@ -2,9 +2,15 @@ require 'facebooker/model'
 module Facebooker
   ##
   # A simple representation of a comment
+  # Since Facebook has two different ways to deal with comments
+  # (via stream.* and via comments.*) we have to be flexible.
+  # Which attr_accessors come in to play will depend on the context
+  # for the comment in question.
   class Comment
     include Model
-    attr_accessor :xid, :fromid, :time, :text, :id
+    attr_accessor :xid, :object_id, :fromid, :time, :text, :id
+    attr_accessor :title,:url,:publish_to_stream    
+    attr_accessor :post_id,:comment  #these are for the stream.addComment variation
     
     #options shoudl be something like this
     #{:xid=>xid,
@@ -15,11 +21,65 @@ module Facebooker
     def initialize(options)
       super(options)
       #@session = session
-      @options = options
+      #@options = options
     end
   
     def save()
-       Session.current.post('facebook.comments.add',@options,false)
+      if(!xid.nil? or !object_id.nil?)
+        comment_save()
+      else
+        stream_save()
+      end
+    end
+  
+    def stream_save()
+      params = {:post_id=>post_id,:comment=>comment}
+      Session.current.post('facebook.stream.addComment',params,false)
+    end
+  
+    def comment_save()
+      params = {:text=>text,:title=>title,:url=>url,:publish_to_stream=>publish_to_stream}
+      if(!xid.nil?)
+        params[:xid] = xid
+      elsif
+        params[:object_id] = object_id
+      end  
+      Session.current.post('facebook.comments.add',params,false)
+    end
+    
+    def self.find(options)
+      if !options[:xid].nil?
+        return find_by_xid(options[:xid])
+      elsif !options[:object_id].nil?
+        return find_by_object_id(options[:object_id])
+      elsif !options[:post_id].nil?
+        return find_by_post_id(options[:post_id])
+      end
+      return []
+    end
+    
+    def self.get(options)
+      self.find(options)
+    end
+    
+    
+    
+    #pulls the comment list for a given FB post 
+    def self.find_by_post_id(post_id)
+      @comments = Session.current.post('facebook.stream.getComments',{:post_id => post_id}) do |response|
+        response.map do |hash|
+          Comment.from_hash(hash)
+        end
+      end
+    end
+    
+    #pulls the comment list for a given FB object 
+    def self.find_by_object_id(object_id)
+      @comments = Session.current.post('facebook.stream.getComments',{:object_id => object_id}) do |response|
+        response.map do |hash|
+          Comment.from_hash(hash)
+        end
+      end
     end
     
     #pulls the comment list for a given xid
@@ -33,7 +93,13 @@ module Facebooker
       
     #remove a this comment
     def remove()
-      Session.current.post('facebook.comments.remove', {:xid=>xid, :comment_id =>id})
+      if !xid.nil?
+        Session.current.post('facebook.comments.remove', {:xid=>xid, :comment_id =>id})
+      elsif !object_id.nil?
+        Session.current.post('facebook.comments.remove', {:object_id=>object_id, :comment_id =>id})
+      elsif !post_id.nil?
+        Session.current.post('facebook.stream.removeComment', {:comment_id =>id})
+      end
     end
   
   
