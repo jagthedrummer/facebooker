@@ -33,12 +33,12 @@ module Facebooker
     end
   
     def stream_save()
-      params = {:post_id=>post_id,:comment=>comment}
+      params = {:post_id=>post_id,:comment=>comment,:uid=>Session.current.user.id}
       Session.current.post('facebook.stream.addComment',params,false)
     end
   
     def comment_save()
-      params = {:text=>text,:title=>title,:url=>url,:publish_to_stream=>publish_to_stream}
+      params = {:text=>text,:title=>title,:url=>url,:publish_to_stream=>publish_to_stream,:uid=>Session.current.user.id}
       if(!xid.nil?)
         params[:xid] = xid
       elsif
