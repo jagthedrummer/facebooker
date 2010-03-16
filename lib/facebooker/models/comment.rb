@@ -91,6 +91,16 @@ module Facebooker
       end
     end
       
+    def self.delete(params)
+      if !params[:xid].nil?
+        Session.current.post('facebook.comments.remove', {:xid=>params[:xid], :comment_id =>params[:comment_id]})
+      elsif !object_id.nil?
+        Session.current.post('facebook.comments.remove', {:object_id=>params[:object_id], :comment_id =>params[:comment_id]})
+      else
+        Session.current.post('facebook.stream.removeComment', {:comment_id =>params[:comment_id]})
+      end
+    end
+
     #remove a this comment
     def remove()
       if !xid.nil?

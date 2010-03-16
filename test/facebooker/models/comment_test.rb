@@ -74,6 +74,24 @@ class Facebooker::CommentTest < Test::Unit::TestCase
     assert_equal false, comment.remove
   end
 
+
+  def test_delete_true
+    expect_http_posts_with_responses(example_comments_xml,example_remove_comment_true)
+    comments = Facebooker::Comment.find_by_xid('pete_comments')
+    comment = comments[0]
+    #expect_http_posts_with_responses()
+    assert_equal true, Facebooker::Comment.delete({:xid=>'pete_comments',:comment_id=>comment.id})
+  end
+  
+  def test_delete_false
+    expect_http_posts_with_responses(example_comments_xml,example_remove_comment_false)
+    comments = Facebooker::Comment.find_by_xid('pete_comments')
+    comment = comments[0]
+    #expect_http_posts_with_responses()
+    assert_equal false, Facebooker::Comment.delete({:xid=>'pete_comments',:comment_id=>comment.id})
+  end
+  
+
   def test_get_comments_by_post_id
     expect_http_posts_with_responses(example_comments_by_post_xml)
     comments = Facebooker::Comment.find(:post_id=>'pete_comments')
@@ -97,6 +115,24 @@ class Facebooker::CommentTest < Test::Unit::TestCase
     #expect_http_posts_with_responses()
     assert_equal false, comment.remove
   end
+
+
+  def test_delete_by_post_true
+    expect_http_posts_with_responses(example_comments_by_post_xml,example_remove_comment_true)
+    comments = Facebooker::Comment.find(:post_id=>'pete_comments')
+    comment = comments[0]
+    #expect_http_posts_with_responses()
+    assert_equal true, Facebooker::Comment.delete({:post_id=>'pete_comments',:comment_id=>comment.id})
+  end
+  
+  def test_delete_by_post_false
+    expect_http_posts_with_responses(example_comments_by_post_xml,example_remove_comment_false)
+    comments = Facebooker::Comment.find(:post_id=>'pete_comments')
+    comment = comments[0]
+    #expect_http_posts_with_responses()
+    assert_equal false, Facebooker::Comment.delete({:post_id=>'pete_comments',:comment_id=>comment.id})
+  end
+
   
   
   def test_get_comments_by_object_id
@@ -122,6 +158,24 @@ class Facebooker::CommentTest < Test::Unit::TestCase
     #expect_http_posts_with_responses()
     assert_equal false, comment.remove
   end
+
+  def test_delete_by_object_true
+    expect_http_posts_with_responses(example_comments_by_object_xml,example_remove_comment_true)
+    comments = Facebooker::Comment.find(:object_id=>'pete_comments')
+    comment = comments[0]
+    #expect_http_posts_with_responses()
+    assert_equal true, Facebooker::Comment.delete({:comment_id=>comment.id})
+  end
+  
+  def test_delete_by_object_false
+    expect_http_posts_with_responses(example_comments_by_object_xml,example_remove_comment_false)
+    comments = Facebooker::Comment.find(:object_id=>'pete_comments')
+    comment = comments[0]
+    #expect_http_posts_with_responses()
+    assert_equal false,  Facebooker::Comment.delete({:comment_id=>comment.id})
+  end
+  
+
 
 private
 
