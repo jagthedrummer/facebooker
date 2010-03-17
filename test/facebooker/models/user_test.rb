@@ -356,7 +356,6 @@ class Facebooker::UserTest < Test::Unit::TestCase
 
   def test_parse_increment_dashboard_count
     expect_http_posts_with_responses(dashboard_increment_count_xml)
-    debugger
     assert_equal true, @user.dashboard_increment_count
   end
 
@@ -426,7 +425,7 @@ class Facebooker::UserTest < Test::Unit::TestCase
   
   def test_parse_dashboard_multi_set_count
     expect_http_posts_with_responses(dashboard_multi_set_count_xml)
-    assert_equal({ '1234' => '1', '4321' => '1' }, Facebooker::User.dashboard_multi_set_count({ '1234' => '11', '5678' => '22' }))
+    assert_equal({ '1234' => true, '4321' => true }, Facebooker::User.dashboard_multi_set_count({ '1234' => '11', '5678' => '22' }))
   end
   
   def test_can_dashboard_multi_get_count
@@ -439,24 +438,39 @@ class Facebooker::UserTest < Test::Unit::TestCase
     assert_equal({ '1234' => '11', '4321' => '22' }, Facebooker::User.dashboard_multi_get_count(['1234', '4321']))
   end
   
-  def test_can_dashboard_multi_increment_count
+  def test_can_dashboard_multi_increment_count_with_single_uid
+    Facebooker::Session.any_instance.expects(:post).with('facebook.dashboard.multiIncrementCount', :uids => ['8675309'].to_json)
+    Facebooker::User.dashboard_multi_increment_count 8675309
+  end
+  
+  def test_can_dashboard_multi_increment_count_with_multiple_uids
+    Facebooker::Session.any_instance.expects(:post).with('facebook.dashboard.multiIncrementCount', :uids => ['8675309', '555'].to_json)
+    Facebooker::User.dashboard_multi_increment_count 8675309, 555
+  end
+  
+  def test_can_dashboard_multi_increment_count_with_array_of_uids
     Facebooker::Session.any_instance.expects(:post).with('facebook.dashboard.multiIncrementCount', :uids => ['1234', '4321'].to_json)
     Facebooker::User.dashboard_multi_increment_count ['1234', '4321']
   end
   
   def test_parse_dashboard_multi_increment_count
     expect_http_posts_with_responses(dashboard_multi_increment_count_xml)
-    assert_equal({ '1234' => '1', '4321' => '1' }, Facebooker::User.dashboard_multi_increment_count(['1234', '4321']))
+    assert_equal({ '1234' => true, '4321' => true }, Facebooker::User.dashboard_multi_increment_count(['1234', '4321']))
   end
   
-  def test_can_dashboard_multi_decrement_count
-    Facebooker::Session.any_instance.expects(:post).with('facebook.dashboard.multiDecrementCount', :uids => ['1234', '4321'].to_json)
-    Facebooker::User.dashboard_multi_decrement_count ['1234', '4321']
+  def test_can_dashboard_multi_decrement_count_with_single_uid
+    Facebooker::Session.any_instance.expects(:post).with('facebook.dashboard.multiDecrementCount', :uids => ['99999999'].to_json)
+    Facebooker::User.dashboard_multi_decrement_count 99999999
+  end
+  
+  def test_can_dashboard_multi_decrement_count_with_multiple_uids
+    Facebooker::Session.any_instance.expects(:post).with('facebook.dashboard.multiDecrementCount', :uids => ['1111', '2222'].to_json)
+    Facebooker::User.dashboard_multi_decrement_count 1111, 2222
   end
 
-  def test_parse_dashboard_multi_decrement_count
+  def test_parse_dashboard_multi_decrement_count_with_array_of_uids
     expect_http_posts_with_responses(dashboard_multi_decrement_count_xml)
-    assert_equal({ '1234' => '1', '4321' => '1' }, Facebooker::User.dashboard_multi_decrement_count(['1234', '4321']))
+    assert_equal({ '1234' => true, '4321' => true }, Facebooker::User.dashboard_multi_decrement_count(['1234', '4321']))
   end
   # Dashboard
   
@@ -492,7 +506,7 @@ class Facebooker::UserTest < Test::Unit::TestCase
   
   def test_parse_clear_news
     expect_http_posts_with_responses(clear_news_xml)
-    assert_equal({"362466171040"=>"1"}, @user.clear_news('362466171040'))
+    assert_equal({"362466171040"=>true}, @user.clear_news('362466171040'))
   end
   
   def test_can_multi_add_news
@@ -522,7 +536,7 @@ class Facebooker::UserTest < Test::Unit::TestCase
   
   def test_parse_multi_clear_news
     expect_http_posts_with_responses(multi_clear_news_xml)
-    assert_equal({"1234"=>{"319103117527"=>"1"}, "4321"=>{"313954287803"=>"1"}}, Facebooker::User.multi_clear_news({"1234"=>["319103117527"], "4321"=>["313954287803"]}))
+    assert_equal({"1234"=>{"319103117527"=>true}, "4321"=>{"313954287803"=>true}}, Facebooker::User.multi_clear_news({"1234"=>["319103117527"], "4321"=>["313954287803"]}))
   end
   
   def test_can_publish_activity
@@ -552,7 +566,7 @@ class Facebooker::UserTest < Test::Unit::TestCase
   
   def test_parse_remove_activity
     expect_http_posts_with_responses(remove_activity_xml)
-    assert_equal({"342454152268"=>"1"}, @user.remove_activity('123'))
+    assert_equal({"342454152268"=>true}, @user.remove_activity('123'))
   end
 
   
