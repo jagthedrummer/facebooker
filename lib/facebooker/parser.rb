@@ -456,7 +456,11 @@ module Facebooker
   class GetStream < Parser #:nodoc:
     def self.process(data)
       response = {}
-      response[:albums] = array_of_hashes(element('stream_get_response/albums', data), 'album')
+      begin
+        response[:albums] = array_of_hashes(element('stream_get_response/albums', data), 'album')
+      rescue 
+        #sometimes there are not any albums
+      end
       response[:posts] = array_of_hashes(element('stream_get_response/posts', data), 'stream_post')
       response[:profile] = array_of_hashes(element('stream_get_response/profiles', data), 'profile')
       response
